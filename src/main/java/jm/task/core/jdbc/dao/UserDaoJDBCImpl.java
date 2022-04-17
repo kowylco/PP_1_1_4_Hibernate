@@ -23,7 +23,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public void createUsersTable() {
         try {
             Statement statement = connection.createStatement();
-            String SQL = "CREATE TABLE `users` (`id` INT, `name` VARCHAR(45), `lastname` VARCHAR(45), `age` INT);";
+            String SQL = "CREATE TABLE `users` (`id` SERIAL, `name` VARCHAR(45), `lastname` VARCHAR(45), `age` INT);";
 
             statement.execute(SQL);
 
@@ -45,7 +45,15 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
+        try {
+            Statement statement = connection.createStatement();
+            String SQL = String.format("insert into users (name, lastname, age) values ('%s', '%s', '%d');", name, lastName, age);
 
+            statement.execute(SQL);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void removeUserById(long id) {
