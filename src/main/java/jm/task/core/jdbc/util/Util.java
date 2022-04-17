@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class Util {
     // реализуйте настройку соеденения с БД
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/mysql?serverTimezone=UTC";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/schema?serverTimezone=UTC";
     private static final String USERNAME = "kata";
     private static final String PASSWORD = "P@ssw0rd";
 
