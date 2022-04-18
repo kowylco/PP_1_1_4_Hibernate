@@ -11,6 +11,7 @@ public class Main {
         // реализуйте алгоритм здесь
         UserDao userDao = new UserDaoJDBCImpl();
         userDao.createUsersTable();
+        userDao.createUsersTable();
 
         userDao.saveUser("Aasya", "Pukin", (byte) 23);
         userDao.saveUser("Xasya", "Pukin", (byte) 34);
@@ -21,11 +22,13 @@ public class Main {
         List<User> users = userDao.getAllUsers();
         users.forEach(System.out::println);
 
+        System.out.println("after clean");
         userDao.cleanUsersTable();
         users = userDao.getAllUsers();
         users.forEach(System.out::println);
-        System.out.println("after clean");
 
+
+        userDao.dropUsersTable();
         userDao.dropUsersTable();
     }
 }
