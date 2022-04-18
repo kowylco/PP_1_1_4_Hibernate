@@ -17,6 +17,8 @@ public class Main {
         userDao.saveUser("Xasya", "Pukin", (byte) 34);
         userDao.saveUser("FEsya", "Pukin", (byte) 24);
 
+        userDao.removeUserById(1);
+
         List<User> users = userDao.getAllUsers();
         users.forEach(System.out::println);
 
