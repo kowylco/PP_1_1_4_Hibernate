@@ -27,7 +27,7 @@ public class UserDaoJDBCImpl implements UserDao {
             String SQL = "CREATE TABLE `users` (`id` SERIAL, `name` VARCHAR(45), `lastname` VARCHAR(45), `age` INT);";
 
             statement.execute(SQL);
-
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -39,7 +39,7 @@ public class UserDaoJDBCImpl implements UserDao {
             String SQL = "DROP TABLE users";
 
             statement.execute(SQL);
-
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -51,7 +51,7 @@ public class UserDaoJDBCImpl implements UserDao {
             String SQL = String.format("insert into users (name, lastname, age) values ('%s', '%s', '%d');", name, lastName, age);
 
             statement.execute(SQL);
-
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -63,7 +63,7 @@ public class UserDaoJDBCImpl implements UserDao {
             String SQL = String.format("DELETE FROM users WHERE id='%d';", id);
 
             statement.execute(SQL);
-
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -88,8 +88,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setId(id);
                 users.add(user);
             }
-
-
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -102,7 +101,7 @@ public class UserDaoJDBCImpl implements UserDao {
             String SQL = "truncate users";
 
             statement.execute(SQL);
-
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
