@@ -38,28 +38,34 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(String.format("insert into users (name, lastname, age) values ('%s', '%s', '%d');", name, lastName, age));
+        try (PreparedStatement prepareStatement = connection.prepareStatement("insert into users (name, lastname, age) values (?, ?, ?);")) {
+//            statement.execute(String.format("insert into users (name, lastname, age) values ('%s', '%s', '%d');", name, lastName, age));
+            prepareStatement.setString(1, name);
+            prepareStatement.setString(2, lastName);
+            prepareStatement.setByte(3, age);
+
+            prepareStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void removeUserById(long id) {
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(String.format("DELETE FROM users WHERE id='%d';", id));
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM users WHERE id=?;")) {
+            preparedStatement.setLong(1, id);
+
+            preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public List<User> getAllUsers() {
-        Statement statement = null;
+        PreparedStatement statement = null;
         List<User> users = new ArrayList<>();
 
         try {
-            statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT all * FROM users;");
+            ResultSet resultSet = connection.prepareStatement("SELECT all * FROM users;").executeQuery();
 
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
@@ -71,23 +77,17 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setId(id);
                 users.add(user);
             }
+
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                }
-            } catch (SQLException e) {
-                //ignore
-            }
         }
         return users;
     }
 
     public void cleanUsersTable() {
-        try (Statement statement = connection.createStatement()) {
-            statement.execute("TRUNCATE users");
+        try (PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE users")) {
+            preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
