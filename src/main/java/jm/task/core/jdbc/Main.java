@@ -4,7 +4,6 @@ import jm.task.core.jdbc.dao.UserDao;
 import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 import jm.task.core.jdbc.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -21,6 +20,11 @@ public class Main {
 
         List<User> users = userDao.getAllUsers();
         users.forEach(System.out::println);
+
+        userDao.cleanUsersTable();
+        users = userDao.getAllUsers();
+        users.forEach(System.out::println);
+        System.out.println("after clean");
 
         userDao.dropUsersTable();
     }
