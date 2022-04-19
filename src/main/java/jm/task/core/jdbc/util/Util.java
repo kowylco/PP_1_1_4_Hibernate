@@ -16,16 +16,11 @@ public class Util {
 
     }
 
-    static {
-        try {
+    public static synchronized Connection getSQLConnection() throws ClassNotFoundException, SQLException {
+        if (connection == null) {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
         }
-    }
-
-    public static Connection getSQLConnection() {
         return connection;
     }
 }

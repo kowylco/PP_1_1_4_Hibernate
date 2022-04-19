@@ -1,53 +1,51 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.util.Util;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoJDBCImpl implements UserDao {
-    private static final Connection CONNECTION = Util.getSQLConnection();
+import static jm.task.core.jdbc.util.Util.getSQLConnection;
 
+public class UserDaoJDBCImpl implements UserDao {
     public UserDaoJDBCImpl() {
 
     }
 
     public void createUsersTable() {
-        try (Statement statement = CONNECTION.createStatement()) {
+        try (Statement statement = getSQLConnection().createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS `users` (`id` SERIAL, `name` VARCHAR(45), `lastname` VARCHAR(45), `age` INT);");
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public void dropUsersTable() {
-        try (Statement statement = CONNECTION.createStatement()) {
+        try (Statement statement = getSQLConnection().createStatement()) {
             statement.execute("DROP TABLE IF EXISTS users");
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        try (PreparedStatement prepareStatement = CONNECTION.prepareStatement("insert into users (name, lastname, age) values (?, ?, ?);")) {
+        try (PreparedStatement prepareStatement = getSQLConnection().prepareStatement("insert into users (name, lastname, age) values (?, ?, ?);")) {
             prepareStatement.setString(1, name);
             prepareStatement.setString(2, lastName);
             prepareStatement.setByte(3, age);
 
             prepareStatement.execute();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public void removeUserById(long id) {
-        try (PreparedStatement preparedStatement = CONNECTION.prepareStatement("DELETE FROM users WHERE id=?;")) {
+        try (PreparedStatement preparedStatement = getSQLConnection().prepareStatement("DELETE FROM users WHERE id=?;")) {
             preparedStatement.setLong(1, id);
 
             preparedStatement.execute();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -56,7 +54,7 @@ public class UserDaoJDBCImpl implements UserDao {
         List<User> users = new ArrayList<>();
 
         try {
-            ResultSet resultSet = CONNECTION.prepareStatement("SELECT all * FROM users;").executeQuery();
+            ResultSet resultSet = getSQLConnection().prepareStatement("SELECT all * FROM users;").executeQuery();
 
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
@@ -70,16 +68,16 @@ public class UserDaoJDBCImpl implements UserDao {
             }
 
             resultSet.close();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return users;
     }
 
     public void cleanUsersTable() {
-        try (PreparedStatement preparedStatement = CONNECTION.prepareStatement("TRUNCATE users")) {
+        try (PreparedStatement preparedStatement = getSQLConnection().prepareStatement("TRUNCATE users")) {
             preparedStatement.execute();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
