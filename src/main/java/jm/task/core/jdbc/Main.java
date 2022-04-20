@@ -11,7 +11,7 @@ public class Main {
         UserDao userDao = new UserDaoJDBCImpl();
 
 //1 Создание таблицы User(ов)
-        userDao.createUsersTable();
+//        userDao.createUsersTable();
 //2 Добавление 4 User(ов) в таблицу с данными на свой выбор. После каждого добавления должен быть вывод в консоль
         userDao.saveUser("Vasya", "Lozhkin", (byte) 23);
         userDao.saveUser("Petya", "Vilkin", (byte) 34);
@@ -21,8 +21,8 @@ public class Main {
         List<User> users = userDao.getAllUsers();
         users.forEach(System.out::println);
 //4 Очистка таблицы User(ов)
-        userDao.cleanUsersTable();
+//        userDao.cleanUsersTable();
 //5 Удаление таблицы
-        userDao.dropUsersTable();
+//        userDao.dropUsersTable();
     }
 }
