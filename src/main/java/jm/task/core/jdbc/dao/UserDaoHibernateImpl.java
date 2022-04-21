@@ -6,6 +6,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +19,32 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
+        try (Session session = Util.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
 
+            session.createSQLQuery("CREATE TABLE IF NOT EXISTS `user` (`id` SERIAL, `name` VARCHAR(50), `lastname` VARCHAR(50), `age` INT);")
+                    .addEntity(User.class)
+                    .executeUpdate();
+
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void dropUsersTable() {
+        try (Session session = Util.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
 
+            session.createSQLQuery("DROP TABLE IF EXISTS user")
+                    .addEntity(User.class)
+                    .executeUpdate();
+
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -60,7 +82,11 @@ public class UserDaoHibernateImpl implements UserDao {
         try (Session session = Util.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
-            users = session.createQuery("FROM User").list();
+            CriteriaQuery<User> cq = session.getCriteriaBuilder().createQuery(User.class);
+            Root<User> root = cq.from(User.class);
+            CriteriaQuery<User> all = cq.select(root);
+
+            users = session.createQuery(all).getResultList();
 
             transaction.commit();
         } catch (HibernateException e) {
@@ -71,6 +97,15 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
+        try (Session session = Util.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
 
+            session.createSQLQuery("TRUNCATE TABLE user")
+                    .executeUpdate();
+
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
