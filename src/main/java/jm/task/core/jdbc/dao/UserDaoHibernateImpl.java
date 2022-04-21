@@ -2,11 +2,11 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
-import org.hibernate.query.criteria.JpaCriteriaQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -27,44 +27,46 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        Transaction transaction = null;
         try (Session session = Util.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(new User(name, lastName, age));
+            Transaction transaction = session.beginTransaction();
+            User user = new User(name, lastName, age);
+            session.save(user);
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             e.printStackTrace();
         }
     }
 
     @Override
     public void removeUserById(long id) {
+        try (Session session = Util.getSessionFactory().openSession()){
+            Transaction transaction = session.beginTransaction();
+
+            User user = session.get(User.class, id);
+            session.remove(user);
+
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Override
     public List<User> getAllUsers() {
-        Transaction transaction = null;
-        List<User> userList = null;
+
+        List<User> users = new ArrayList<>();
+
         try (Session session = Util.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
 
-            HibernateCriteriaBuilder hcb = session.getCriteriaBuilder();
-            JpaCriteriaQuery<User> q = hcb.createQuery(User.class);
-
-            userList = session.createQuery(q).getResultList();
+            users = session.createQuery("FROM User").list();
 
             transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+        } catch (HibernateException e) {
             e.printStackTrace();
         }
-        return userList;
+        return users;
     }
 
     @Override
